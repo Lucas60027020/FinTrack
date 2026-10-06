@@ -1,326 +1,127 @@
 ﻿{% extends "base.html" %}
-
 {% block content %}
 
-<div class="topbar">
+<div class="page-header">
     <div>
-        <p class="eyebrow">FINTRACK • PERSONAL FINANCE</p>
-        <h1>Good to see you, {{ user_name }} 👋</h1>
-        <p class="muted">Track your money, understand your spending and stay in control.</p>
+        <div class="eyebrow">FINANCIAL OVERVIEW</div>
+        <h1>Welcome back, {{ session["user_name"] }} 👋</h1>
+        <p class="muted">Here's what's happening with your money.</p>
     </div>
-
-    <div class="top-actions">
-        <a class="button secondary" href="{{ url_for('export_csv') }}">Export CSV</a>
-        <a class="button danger" href="{{ url_for('logout') }}">Logout</a>
-    </div>
+    <a class="outline-btn" href="{{ url_for('export_csv') }}">↓ Export CSV</a>
 </div>
 
-
 <div class="stats-grid">
-
     <div class="stat-card">
-        <div class="stat-label">TOTAL BALANCE</div>
-        <div class="stat-value">₹{{ "%.2f"|format(balance) }}</div>
-        <div class="stat-note">Available balance</div>
+        <span>AVAILABLE BALANCE</span>
+        <strong>₹{{ "{:,.2f}".format(balance) }}</strong>
+        <small>Income minus expenses</small>
     </div>
 
     <div class="stat-card income-card">
-        <div class="stat-label">TOTAL INCOME</div>
-        <div class="stat-value">₹{{ "%.2f"|format(income) }}</div>
-        <div class="stat-note">Money received</div>
+        <span>TOTAL INCOME</span>
+        <strong>₹{{ "{:,.2f}".format(income) }}</strong>
+        <small>All recorded income</small>
     </div>
 
     <div class="stat-card expense-card">
-        <div class="stat-label">TOTAL EXPENSES</div>
-        <div class="stat-value">₹{{ "%.2f"|format(expenses) }}</div>
-        <div class="stat-note">Money spent</div>
+        <span>TOTAL EXPENSES</span>
+        <strong>₹{{ "{:,.2f}".format(expenses) }}</strong>
+        <small>All recorded spending</small>
     </div>
 
     <div class="stat-card">
-        <div class="stat-label">SAVINGS RATE</div>
-        <div class="stat-value">{{ savings_rate }}%</div>
-        <div class="stat-note">Income retained</div>
+        <span>SAVINGS RATE</span>
+        <strong>{{ savings }}%</strong>
+        <small>Current savings ratio</small>
+    </div>
+</div>
+
+<div class="grid-2">
+    <section class="panel">
+        <div class="panel-title">
+            <div>
+                <div class="eyebrow">AI INSIGHT</div>
+                <h2>Financial Health</h2>
+            </div>
+            <span class="ai-badge">AI</span>
+        </div>
+        <div class="insight">{{ insight }}</div>
+        <a class="primary-btn inline-btn" href="{{ url_for('assistant') }}">
+            Ask FinTrack AI →
+        </a>
+    </section>
+
+    <section class="panel">
+        <div class="panel-title">
+            <div>
+                <div class="eyebrow">SPENDING</div>
+                <h2>Top Categories</h2>
+            </div>
+        </div>
+
+        {% if categories %}
+            {% set max_value = categories[0]["total"] %}
+            {% for row in categories %}
+            <div class="bar-row">
+                <div class="bar-label">
+                    <span>{{ row["category"] }}</span>
+                    <b>₹{{ "{:,.0f}".format(row["total"]) }}</b>
+                </div>
+                <div class="bar">
+                    <div style="width: {{ (row['total'] / max_value * 100)|round }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="muted">Add expenses to see spending categories.</p>
+        {% endif %}
+    </section>
+</div>
+
+<section class="panel">
+    <div class="panel-title">
+        <div>
+            <div class="eyebrow">ACTIVITY</div>
+            <h2>Recent Transactions</h2>
+        </div>
+        <a class="outline-btn small-btn" href="{{ url_for('transactions') }}">View all</a>
     </div>
 
-</div>
-
-
-<div class="main-grid">
-
-    <section class="panel">
-        <div class="panel-header">
-            <div>
-                <p class="eyebrow">TRANSACTION</p>
-                <h2>Add transaction</h2>
-            </div>
-        </div>
-
-        <form method="POST" action="{{ url_for('add_transaction') }}" class="transaction-form">
-
-            <div class="type-switch">
-                <label>
-                    <input type="radio" name="type" value="expense" checked>
-                    Expense
-                </label>
-
-                <label>
-                    <input type="radio" name="type" value="income">
-                    Income
-                </label>
-            </div>
-
-            <label>Amount</label>
-            <input type="number" name="amount" step="0.01" min="0.01" placeholder="2500" required>
-
-            <label>Category</label>
-            <select name="category" required>
-                <option value="">Choose category</option>
-                <option>Food</option>
-                <option>Transport</option>
-                <option>Shopping</option>
-                <option>Bills</option>
-                <option>Entertainment</option>
-                <option>Education</option>
-                <option>Health</option>
-                <option>Salary</option>
-                <option>Freelance</option>
-                <option>Other</option>
-            </select>
-
-            <label>Description</label>
-            <input type="text" name="description" placeholder="e.g. College lunch">
-
-            <label>Date</label>
-            <input type="date" name="transaction_date">
-
-            <button type="submit">+ Add Transaction</button>
-        </form>
-    </section>
-
-
-    <section class="panel insight-panel">
-        <div class="panel-header">
-            <div>
-                <p class="eyebrow">AI FINANCE INSIGHT</p>
-                <h2>Your financial assistant</h2>
-            </div>
-            <div class="ai-icon">AI</div>
-        </div>
-
-        <div class="insight">
-            <p>{{ insight }}</p>
-        </div>
-
-        <div class="mini-metrics">
-            <div>
-                <strong>₹{{ "%.0f"|format(income) }}</strong>
-                <span>Income</span>
-            </div>
-            <div>
-                <strong>₹{{ "%.0f"|format(expenses) }}</strong>
-                <span>Expenses</span>
-            </div>
-            <div>
-                <strong>{{ savings_rate }}%</strong>
-                <span>Saved</span>
-            </div>
-        </div>
-    </section>
-
-</div>
-
-
-<div class="content-grid">
-
-    <section class="panel wide-panel">
-
-        <div class="panel-header">
-            <div>
-                <p class="eyebrow">ACTIVITY</p>
-                <h2>Recent transactions</h2>
-            </div>
-
-            <span class="count-badge">{{ transactions|length }}</span>
-        </div>
-
-        {% if transactions %}
-
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Description</th>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for transaction in transactions %}
-                    <tr>
-                        <td>{{ transaction["transaction_date"] }}</td>
-
-                        <td>
-                            <span class="category">
-                                {{ transaction["category"] }}
-                            </span>
-                        </td>
-
-                        <td>{{ transaction["description"] or "—" }}</td>
-
-                        <td>
-                            {% if transaction["type"] == "income" %}
-                            <span class="income-text">Income</span>
-                            {% else %}
-                            <span class="expense-text">Expense</span>
-                            {% endif %}
-                        </td>
-
-                        <td class="{{ transaction['type'] }}-text">
-                            {% if transaction["type"] == "income" %}+{% else %}-{% endif %}
-                            ₹{{ "%.2f"|format(transaction["amount"]) }}
-                        </td>
-
-                        <td>
-                            <form method="POST"
-                                  action="{{ url_for('delete_transaction', transaction_id=transaction['id']) }}">
-                                <button class="delete-btn" type="submit">×</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        {% else %}
-
-        <div class="empty">
-            <div class="empty-icon">₹</div>
-            <h3>No transactions yet</h3>
-            <p>Add your first income or expense above.</p>
-        </div>
-
-        {% endif %}
-
-    </section>
-
-
-    <section class="panel">
-
-        <div class="panel-header">
-            <div>
-                <p class="eyebrow">SPENDING</p>
-                <h2>Top categories</h2>
-            </div>
-        </div>
-
-        {% if category_rows %}
-
-            {% for row in category_rows %}
-
-            <div class="category-row">
-                <div class="category-line">
-                    <span>{{ row["category"] }}</span>
-                    <strong>₹{{ "%.0f"|format(row["total"]) }}</strong>
-                </div>
-
-                <div class="progress">
-                    <div style="width: {{ [100, (row['total'] / expenses * 100) if expenses else 0]|min }}%"></div>
-                </div>
-            </div>
-
-            {% endfor %}
-
-        {% else %}
-
-            <p class="muted">Your spending categories will appear here.</p>
-
-        {% endif %}
-
-    </section>
-
-</div>
-
-
-<div class="content-grid">
-
-    <section class="panel">
-
-        <div class="panel-header">
-            <div>
-                <p class="eyebrow">BUDGETING</p>
-                <h2>Create budget</h2>
-            </div>
-        </div>
-
-        <form method="POST" action="{{ url_for('add_budget') }}" class="transaction-form">
-
-            <label>Category</label>
-            <select name="category" required>
-                <option value="">Choose category</option>
-                <option>Food</option>
-                <option>Transport</option>
-                <option>Shopping</option>
-                <option>Bills</option>
-                <option>Entertainment</option>
-                <option>Education</option>
-                <option>Health</option>
-                <option>Other</option>
-            </select>
-
-            <label>Monthly limit</label>
-            <input type="number" name="amount" min="1" step="0.01" placeholder="5000" required>
-
-            <label>Month</label>
-            <input type="month" name="month" required>
-
-            <button type="submit">Save Budget</button>
-
-        </form>
-
-    </section>
-
-
-    <section class="panel">
-
-        <div class="panel-header">
-            <div>
-                <p class="eyebrow">YOUR LIMITS</p>
-                <h2>Budgets</h2>
-            </div>
-        </div>
-
-        {% if budgets %}
-
-            {% for budget in budgets %}
-
-            <div class="budget-item">
-                <div class="category-line">
-                    <span>{{ budget["category"] }}</span>
-                    <strong>₹{{ "%.0f"|format(budget["amount"]) }}</strong>
-                </div>
-
-                <small>{{ budget["month"] }}</small>
-
-                <div class="progress">
-                    <div style="width: 0%"></div>
-                </div>
-            </div>
-
-            {% endfor %}
-
-        {% else %}
-
-            <p class="muted">No budgets created yet.</p>
-
-        {% endif %}
-
-    </section>
-
-</div>
+    {% if recent %}
+    <div class="table-wrap">
+    <table>
+        <thead>
+        <tr>
+            <th>DATE</th>
+            <th>DESCRIPTION</th>
+            <th>CATEGORY</th>
+            <th>TYPE</th>
+            <th>AMOUNT</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in recent %}
+        <tr>
+            <td>{{ row["transaction_date"] }}</td>
+            <td>{{ row["description"] or "—" }}</td>
+            <td>{{ row["category"] }}</td>
+            <td>
+                <span class="pill {{ row['type'] }}">
+                    {{ row["type"]|upper }}
+                </span>
+            </td>
+            <td class="{{ row['type'] }}">
+                {% if row["type"] == "income" %}+{% else %}-{% endif %}
+                ₹{{ "{:,.2f}".format(row["amount"]) }}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+        <div class="empty">No transactions yet. Add your first transaction.</div>
+    {% endif %}
+</section>
 
 {% endblock %}

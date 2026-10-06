@@ -1,0 +1,46 @@
+﻿{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <div class="eyebrow">PRIVATE FINANCE ASSISTANT</div>
+        <h1>FinTrack AI 🤖</h1>
+        <p class="muted">Ask questions about your recorded financial activity.</p>
+    </div>
+</div>
+
+<section class="assistant-card">
+    <div class="robot">✦</div>
+    <h2>Your personal finance assistant</h2>
+    <p>
+        Ask about your balance, income, spending, largest category,
+        or ways to improve your savings.
+    </p>
+
+    <form method="POST">
+        <input
+            class="assistant-input"
+            name="question"
+            value="{{ question }}"
+            placeholder="e.g. How much did I spend?"
+            required
+        >
+        <button class="primary-btn" type="submit">Ask FinTrack AI →</button>
+    </form>
+</section>
+
+{% if answer %}
+<section class="panel ai-answer">
+    <div class="eyebrow">FINTRACK RESPONSE</div>
+    <h2>{{ answer }}</h2>
+</section>
+{% endif %}
+
+<section class="question-grid">
+    <div class="question">“What is my balance?”</div>
+    <div class="question">“How much did I spend?”</div>
+    <div class="question">“What is my biggest expense?”</div>
+    <div class="question">“How can I save more?”</div>
+</section>
+
+{% endblock %}

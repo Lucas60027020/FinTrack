@@ -1,0 +1,73 @@
+﻿{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <div class="eyebrow">SPENDING CONTROL</div>
+        <h1>Budgets</h1>
+        <p class="muted">Set limits and track your actual spending.</p>
+    </div>
+</div>
+
+<section class="panel">
+    <div class="panel-title">
+        <h2>Create or Update Budget</h2>
+    </div>
+
+    <form method="POST" class="form-grid budget-form">
+        <div>
+            <label>Category</label>
+            <input name="category" list="budget-categories" placeholder="Food" required>
+            <datalist id="budget-categories">
+                {% for c in categories %}
+                <option value="{{ c['category'] }}">
+                {% endfor %}
+            </datalist>
+        </div>
+
+        <div>
+            <label>Monthly Limit (₹)</label>
+            <input type="number" name="amount" min="1" step="0.01" placeholder="5000" required>
+        </div>
+
+        <div>
+            <label>Month</label>
+            <input type="month" name="month" value="{{ current_month }}" required>
+        </div>
+
+        <div class="form-submit">
+            <button class="primary-btn" type="submit">Save Budget</button>
+        </div>
+    </form>
+</section>
+
+<div class="budget-grid">
+{% for budget in budgets %}
+<section class="panel budget-card">
+    <div class="budget-head">
+        <div>
+            <div class="eyebrow">{{ budget["month"] }}</div>
+            <h2>{{ budget["category"] }}</h2>
+        </div>
+        <strong>₹{{ "{:,.0f}".format(budget["amount"]) }}</strong>
+    </div>
+
+    <div class="budget-numbers">
+        <span>Spent <b>₹{{ "{:,.0f}".format(budget["spent"]) }}</b></span>
+        <span>Remaining <b>₹{{ "{:,.0f}".format(budget["remaining"]) }}</b></span>
+    </div>
+
+    <div class="progress">
+        <div style="width: {{ budget['percentage'] }}%"></div>
+    </div>
+
+    <div class="budget-percent">{{ budget["percentage"] }}% used</div>
+</section>
+{% else %}
+<section class="panel empty">
+    No budgets yet. Create your first monthly budget above.
+</section>
+{% endfor %}
+</div>
+
+{% endblock %}

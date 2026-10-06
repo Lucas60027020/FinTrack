@@ -1,0 +1,124 @@
+﻿{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <div class="eyebrow">MONEY MOVEMENT</div>
+        <h1>Transactions</h1>
+        <p class="muted">Add, search and manage your financial activity.</p>
+    </div>
+</div>
+
+<div class="grid-2">
+<section class="panel">
+    <div class="panel-title">
+        <h2>Add Transaction</h2>
+        <span class="ai-badge">LIVE</span>
+    </div>
+
+    <form method="POST" action="{{ url_for('add_transaction') }}">
+        <div class="form-grid">
+            <div>
+                <label>Type</label>
+                <select name="type" required>
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Amount (₹)</label>
+                <input type="number" name="amount" min="0.01" step="0.01" placeholder="500" required>
+            </div>
+        </div>
+
+        <label>Category</label>
+        <input name="category" placeholder="Food, Salary, Travel..." required>
+
+        <label>Description</label>
+        <input name="description" placeholder="Optional description">
+
+        <label>Date</label>
+        <input type="date" name="transaction_date" value="{{ today }}" required>
+
+        <button class="primary-btn full-btn" type="submit">+ Add Transaction</button>
+    </form>
+</section>
+
+<section class="panel">
+    <div class="panel-title">
+        <h2>Find Transactions</h2>
+    </div>
+
+    <form method="GET" action="{{ url_for('transactions') }}">
+        <label>Search</label>
+        <input name="search" value="{{ search }}" placeholder="Search category or description">
+
+        <label>Type</label>
+        <select name="type">
+            <option value="">All types</option>
+            <option value="income" {% if selected_type=="income" %}selected{% endif %}>Income</option>
+            <option value="expense" {% if selected_type=="expense" %}selected{% endif %}>Expense</option>
+        </select>
+
+        <label>Category</label>
+        <select name="category">
+            <option value="">All categories</option>
+            {% for c in categories %}
+            <option value="{{ c['category'] }}" {% if selected_category==c['category'] %}selected{% endif %}>
+                {{ c["category"] }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <button class="primary-btn full-btn" type="submit">🔎 Apply Filters</button>
+    </form>
+</section>
+</div>
+
+<section class="panel">
+    <div class="panel-title">
+        <h2>Transaction History</h2>
+        <span class="muted">{{ transactions|length }} result(s)</span>
+    </div>
+
+    {% if transactions %}
+    <div class="table-wrap">
+    <table>
+        <thead>
+        <tr>
+            <th>DATE</th>
+            <th>DESCRIPTION</th>
+            <th>CATEGORY</th>
+            <th>TYPE</th>
+            <th>AMOUNT</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in transactions %}
+        <tr>
+            <td>{{ row["transaction_date"] }}</td>
+            <td>{{ row["description"] or "—" }}</td>
+            <td>{{ row["category"] }}</td>
+            <td><span class="pill {{ row['type'] }}">{{ row["type"] }}</span></td>
+            <td class="{{ row['type'] }}">
+                {% if row["type"]=="income" %}+{% else %}-{% endif %}
+                ₹{{ "{:,.2f}".format(row["amount"]) }}
+            </td>
+            <td>
+                <form method="POST" action="{{ url_for('delete_transaction', transaction_id=row['id']) }}">
+                    <button class="danger-btn" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="empty">No matching transactions found.</div>
+    {% endif %}
+</section>
+
+{% endblock %}

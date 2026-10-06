@@ -3,36 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinTrack — {{ page_title or "Personal Finance" }}</title>
+    <title>FinTrack</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
-    <nav class="navbar">
-        <div class="brand">Fin<span>Track</span></div>
+<div class="app-shell">
 
-        {% if session.get("user_id") %}
-        <div class="nav-links">
-            <a href="{{ url_for('dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
+    {% if session.get("user_id") %}
+    <aside class="sidebar">
+        <div class="logo">Fin<span>Track</span></div>
+        <div class="tagline">PERSONAL FINANCE</div>
+
+        <nav>
+            <a href="{{ url_for('dashboard') }}">🏠 Dashboard</a>
+            <a href="{{ url_for('transactions') }}">💳 Transactions</a>
+            <a href="{{ url_for('budgets') }}">💰 Budgets</a>
+            <a href="{{ url_for('assistant') }}">🤖 FinTrack AI</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="user-mini">
+                <div class="avatar">{{ session.get("user_name","U")[0]|upper }}</div>
+                <div>
+                    <strong>{{ session.get("user_name") }}</strong>
+                    <small>Personal Account</small>
+                </div>
+            </div>
+            <a class="logout" href="{{ url_for('logout') }}">Logout</a>
         </div>
-        {% endif %}
-    </nav>
+    </aside>
+    {% endif %}
 
-    <main class="container">
+    <main class="main-content">
+
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% for category, message in messages %}
                 <div class="alert {{ category }}">{{ message }}</div>
             {% endfor %}
         {% endwith %}
 
-        {% block content %}
-        <section class="hero-card">
-            <p class="eyebrow">PERSONAL FINANCE</p>
-            <h1>Welcome, {{ user_name }} 👋</h1>
-            <p>Your FinTrack workspace is ready.</p>
-        </section>
-        {% endblock %}
+        {% block content %}{% endblock %}
+
     </main>
+</div>
 </body>
 </html>
