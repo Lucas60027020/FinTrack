@@ -1,0 +1,266 @@
+﻿:root {
+    --bg: #06111f;
+    --panel: rgba(12, 28, 45, 0.92);
+    --panel2: rgba(16, 36, 56, 0.95);
+    --border: rgba(76, 173, 255, 0.22);
+    --text: #f4f8fc;
+    --muted: #8ea5bb;
+    --green: #35df91;
+    --blue: #35a7ff;
+    --red: #ff6376;
+    --shadow: 0 18px 50px rgba(0,0,0,.28);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: Inter, Segoe UI, Arial, sans-serif;
+    background:
+        radial-gradient(circle at 10% 0%, rgba(40,150,255,.14), transparent 28%),
+        radial-gradient(circle at 90% 10%, rgba(53,223,145,.10), transparent 25%),
+        linear-gradient(135deg, #06111f, #081827 55%, #06111f);
+}
+
+.container {
+    width: min(1120px, 94%);
+    margin: 0 auto;
+    padding: 28px 0 50px;
+}
+
+.topbar {
+    margin-bottom: 24px;
+}
+
+.brand {
+    color: white;
+    font-weight: 900;
+    letter-spacing: -.5px;
+}
+
+.brand span {
+    color: var(--green);
+}
+
+.eyebrow {
+    color: var(--green);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    margin: 5px 0;
+}
+
+h1, h2, h3, p {
+    margin-top: 0;
+}
+
+h1 {
+    font-size: clamp(24px, 4vw, 34px);
+    margin-bottom: 5px;
+}
+
+h2 {
+    font-size: 17px;
+}
+
+h3 {
+    font-size: 14px;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+a {
+    color: var(--green);
+    text-decoration: none;
+}
+
+button {
+    border: 0;
+    border-radius: 7px;
+    padding: 10px 16px;
+    color: #04110b;
+    background: linear-gradient(135deg, #35df91, #26c979);
+    font-weight: 800;
+    cursor: pointer;
+    transition: .2s ease;
+    box-shadow: 0 7px 20px rgba(53,223,145,.12);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(53,223,145,.25);
+}
+
+input, select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid rgba(126,170,205,.25);
+    border-radius: 7px;
+    background: rgba(3,15,27,.75);
+    color: white;
+    outline: none;
+    transition: .2s;
+}
+
+input:focus, select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(53,167,255,.10);
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    color: #a8bdd0;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.stats {
+    gap: 14px;
+}
+
+.stat-card,
+.panel,
+.auth-card {
+    background: linear-gradient(145deg, rgba(14,34,53,.96), rgba(7,22,36,.96));
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    box-shadow: var(--shadow);
+}
+
+.stat-card {
+    padding: 17px;
+    transition: .2s ease;
+}
+
+.stat-card:hover,
+.panel:hover {
+    border-color: rgba(53,223,145,.4);
+    transform: translateY(-2px);
+}
+
+.stat-card strong {
+    font-size: 22px;
+    display: block;
+    margin: 6px 0;
+}
+
+.stat-card small {
+    color: var(--muted);
+}
+
+.panel {
+    padding: 18px;
+    margin-top: 14px;
+}
+
+.panel-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.panel-title h2,
+.panel-title h3 {
+    margin-bottom: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    color: #7891a8;
+    font-size: 9px;
+    text-align: left;
+    padding: 9px;
+    border-bottom: 1px solid rgba(126,170,205,.16);
+}
+
+td {
+    padding: 11px 9px;
+    border-bottom: 1px solid rgba(126,170,205,.09);
+    font-size: 11px;
+}
+
+tr:hover td {
+    background: rgba(53,167,255,.035);
+}
+
+.alert {
+    padding: 10px 14px;
+    border-radius: 7px;
+    margin-bottom: 14px;
+    font-size: 11px;
+    border: 1px solid rgba(53,223,145,.3);
+    background: rgba(53,223,145,.08);
+}
+
+.alert.error {
+    border-color: rgba(255,99,118,.35);
+    background: rgba(255,99,118,.08);
+}
+
+.auth-card {
+    max-width: 430px;
+    margin: 8vh auto;
+    padding: 34px;
+}
+
+.large {
+    font-size: 27px;
+    margin-bottom: 25px;
+}
+
+.auth-card h1 {
+    margin-bottom: 8px;
+}
+
+.auth-card form {
+    margin-top: 25px;
+}
+
+.auth-card button {
+    width: 100%;
+    margin-top: 18px;
+}
+
+.switch {
+    text-align: center;
+    margin-top: 22px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+@media (max-width: 700px) {
+    .container {
+        width: 92%;
+        padding-top: 18px;
+    }
+
+    .panel {
+        padding: 14px;
+    }
+
+    table {
+        font-size: 10px;
+    }
+
+    th, td {
+        padding: 8px 5px;
+    }
+
+    .auth-card {
+        margin-top: 4vh;
+        padding: 25px;
+    }
+}
